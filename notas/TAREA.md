@@ -52,6 +52,62 @@ La página carga con una lista armada por JavaScript: se ven dos tareas (la segu
 
 ## Version 2: con eventos
 
+```
+// Evento 1
+input.addEventListener("input", function () {
+  contador.textContent = input.value.length + " / " + input.maxLength;
+});
+
+// Evento 2
+form.addEventListener("submit", function (evento) {
+  evento.preventDefault();
+  const texto = input.value.trim();
+
+  if (texto.length < 3) {
+    mostrarMensaje("Escribe al menos 3 caracteres.", "error");
+    input.focus();
+    return;
+  }
+
+  lista.appendChild(crearItem(texto));
+  mostrarMensaje("Tarea agregada.", "ok");
+  form.reset();
+  contador.textContent = "0 / " + input.maxLength;
+  actualizarResumen();
+});
+
+// Evento 3
+lista.addEventListener("click", function (evento) {
+  const li = evento.target.closest("li");
+  if (!li) return;
+
+  if (evento.target.classList.contains("borrar")) {
+    li.remove();
+  } else if (evento.target.classList.contains("marcar")) {
+    li.classList.toggle("hecha");
+  } else {
+    return;
+  }
+  actualizarResumen();
+});
+```
+
+Qué agregué
+
+Tres tipos de eventos distintos:
+
+- input: actualiza el contador de caracteres mientras escribo.
+- submit: valida el texto y agrega la tarea (con preventDefault() para que la página no se recargue).
+- click: sobre la lista (delegación de eventos) para marcar o borrar una tarea, y sobre el botón "Borrar completadas".
+
+Por qué
+
+Para que la página responda al usuario. Usé delegación de eventos en #lista porque las tareas se crean después de cargar la página y así no tengo que agregar un listener a cada botón.
+
+Qué cambió en el comportamiento
+
+Ahora el usuario escribe una tarea y la agrega con el botón o con Enter. Ve el contador cambiar al escribir, recibe un mensaje rojo si el texto es muy corto, puede tachar o destacharlas, borrar una tarea o borrar todas las completadas.
+
 ## Version 3: con clases y objetos
 
 ## Donde uso DOM, eventos y objetos
